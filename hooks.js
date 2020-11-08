@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { generate } from "shortid";
-//import { AsyncStorage } from '@react-native-async-storage/async-storage';
 import { AsyncStorage } from 'react-native';
 
 export const useInfos = () => {
