@@ -13,7 +13,7 @@ export const useInfos = () => {
         }
     }
     //Load Info
-    
+
     useEffect(() => {
         if(infos.length) return;
         loadInfos();
