@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList } from 'react-native';
+import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert } from 'react-native';
+import { useInfos } from '../hooks';
 
 export default function InfoForm({ onNewInfo = f => f }) {
 
@@ -22,6 +23,29 @@ export default function InfoForm({ onNewInfo = f => f }) {
         loadCountry();
     }, []);
 
+    //checks if the inputs are filled
+    function isRequired(security, phone, email, country) {
+        return security.length > 0 && phone.length > 0 && email.length > 0 && country.length > 0 ?
+        isEmail(emailValue) : Alert.alert('All fields have to be filled');
+    }
+
+    //checks if the social security number is valid using regular expression
+    function isSecurity(security) {
+
+    }
+
+    //checks if the phone number is valid using regular expression
+    function isPhone(phone) {
+
+    }
+
+    //checks if the email is valid
+    function isEmail(val) {
+        const ai = val.indexOf("@");
+        const gdi = val.split("").reduce((acc, char, i) => char === "." ? i : acc, 0);
+        return ai > -1 && gdi > ai ? Alert.alert('this is right') : console.log('false email');
+    }
+
     const Entry = () => {
         switch (show) {
             case 1:
@@ -38,7 +62,6 @@ export default function InfoForm({ onNewInfo = f => f }) {
 
                         <Button title='confirm' onPress={() => {
                             input.current.blur();
-                            //setSecurityValue("")
                             onNewInfo(securityValue);
                             setShow(show + 1);
                         }}
@@ -58,7 +81,6 @@ export default function InfoForm({ onNewInfo = f => f }) {
 
                         <Button title='confirm' onPress={() => {
                             input.current.blur();
-                            //setPhoneValue("")
                             onNewInfo(phoneValue);
                             setShow(show + 1);
                         }}
@@ -72,6 +94,7 @@ export default function InfoForm({ onNewInfo = f => f }) {
                     <View style={styles.container}>
                         <TextInput
                             ref={input}
+                            autoCapitalize={false}
                             style={styles.txtInput}
                             placeholder='Email'
                             value={emailValue}
@@ -79,7 +102,6 @@ export default function InfoForm({ onNewInfo = f => f }) {
                         />
                         <Button title='confirm' onPress={() => {
                             input.current.blur();
-                            //setEmailValue("")
                             onNewInfo(emailValue);
                             setShow(show + 1);
                         }}
@@ -118,9 +140,14 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 return (
                     <View style={styles.container}>
                         <Button title='Submit' onPress={() => {
-                            console.log(securityValue, phoneValue, emailValue, selectedCountryValue)
-                            // insert validation
-
+                            console.log(securityValue, phoneValue, emailValue, selectedCountryValue);
+                            isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
+                            
+                            //if any value returns false, then the an alert says what is wrong
+                            //and sets the show value to 1
+                            //if the statement is true, then the local storage and/or array of infos
+                            //are emptied
+                            //if it returns false then the array is emptied
                         }}
                         />
                     </View>

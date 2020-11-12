@@ -13,19 +13,18 @@ export const useInfos = () => {
         }
     }
     //Load Info
-
     useEffect(() => {
-        if(infos.length) return;
+        if (infos.length) return;
         loadInfos();
     }, []);
-    
+
     //Save Info
-    
     useEffect(() => {
         AsyncStorage.setItem("@InfoListStore:Infos", JSON.stringify(infos))
     }, [infos]);
-    
-    
+
+    //add a hook that resets the infos value to []
+
 
     const addInfo = info => {
         const newInfo = { id: generate(), info }

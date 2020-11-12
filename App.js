@@ -4,32 +4,32 @@ import InfoForm from "./components/InfoForm";
 import { useInfos } from './hooks';
 
 
-function InfoSign ({ sign }) {
+function InfoSign({ sign }) {
   return (
-  <Text style={styles.sign}>{sign}</Text>
+    <Text style={styles.sign}>{sign}</Text>
   );
 }
 
 export default function App() {
   //const [sign, setSign] = useState("")
   const { infos, addInfo } = useInfos();
-  
+
 
   return (
     <>
-    <InfoForm onNewInfo={addInfo}
-    />
-    <FlatList style={styles.container}
-    data={infos}
-    renderItem={({ item }) => {
-      return (
-        <InfoSign 
-        key={item.id}
-        sign={item.info}
-        />
-      )
-    }} 
-    />
+      <InfoForm onNewInfo={addInfo}
+      />
+      <FlatList style={styles.container}
+        data={infos}
+        renderItem={({ item }) => {
+          return (
+            <InfoSign
+              key={item.id}
+              sign={item.info}
+            />
+          )
+        }}
+      />
     </>
   );
 }
