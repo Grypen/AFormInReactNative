@@ -16,9 +16,10 @@ export default function App() {
 
 
   return (
-    <>
+    //<>
       <InfoForm onNewInfo={addInfo}
       />
+      /*
       <FlatList style={styles.container}
         data={infos}
         renderItem={({ item }) => {
@@ -30,7 +31,8 @@ export default function App() {
           )
         }}
       />
-    </>
+      */
+      //</>
   );
 }
 

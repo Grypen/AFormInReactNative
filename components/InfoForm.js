@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert } from 'react-native';
+import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert, ScrollView } from 'react-native';
 import { useInfos } from '../hooks';
 
 export default function InfoForm({ onNewInfo = f => f }) {
 
     const [securityValue, setSecurityValue] = useState("");
     const [phoneValue, setPhoneValue] = useState("");
-    const [show, setShow] = useState(1);
     const [emailValue, setEmailValue] = useState("");
     const [countryValue, setCountryValue] = useState("");
     const [selectedCountryValue, setSelectedCountryValue] = useState("");
@@ -23,141 +22,90 @@ export default function InfoForm({ onNewInfo = f => f }) {
         loadCountry();
     }, []);
 
-    //checks if the inputs are filled
+    //checks if the inputs are empty/filled
     function isRequired(security, phone, email, country) {
-        return security.length > 0 && phone.length > 0 && email.length > 0 && country.length > 0 ?
-        isEmail(emailValue) : Alert.alert('All fields have to be filled');
+        return security.length > 0 && phone.length > 0 && email.length > 0 && country.length > 0
+            ? isEmail(emailValue) : Alert.alert('All fields have to be filled');
     }
 
-    //checks if the social security number is valid using regular expression
+    //checks if the social security number is valid using regular expressions
     function isSecurity(security) {
-
+        const validPatterns = [
+            /^\d{10}$/,
+        ]
+        return validPatterns.some((pattern) => pattern.test(security)) ? console.log('true sec') : console.log('false sec')
     }
 
-    //checks if the phone number is valid using regular expression
+    //checks if the phone number is valid using regular expressions
     function isPhone(phone) {
-
+        const validPatterns = [
+            /^0\d{9}$/,
+            /^0\d{8}$/,
+            /^0\d{7}$/,
+        ]
+        return validPatterns.some((pattern) => pattern.test(phone)) ? console.log('true phone') : console.log('false phone')
     }
 
     //checks if the email is valid
     function isEmail(val) {
         const ai = val.indexOf("@");
         const gdi = val.split("").reduce((acc, char, i) => char === "." ? i : acc, 0);
-        return ai > -1 && gdi > ai ? Alert.alert('this is right') : console.log('false email');
+        return ai > -1 && gdi > ai ? Alert.alert('this is right') : Alert.alert('Email is not valid');
     }
 
-    const Entry = () => {
-        switch (show) {
-            case 1:
-                return (
-                    <View style={styles.container}>
-
-                        <TextInput
-                            ref={input}
-                            style={styles.txtInput}
-                            placeholder='Enter Social Security Number'
-                            value={securityValue}
-                            onChangeText={setSecurityValue}
-                            keyboardType='number-pad' />
-
-                        <Button title='confirm' onPress={() => {
-                            input.current.blur();
-                            onNewInfo(securityValue);
-                            setShow(show + 1);
-                        }}
-                        />
-                    </View>
-                );
-            case 2:
-                return (
-                    <View style={styles.container}>
-                        <TextInput
-                            ref={input}
-                            style={styles.txtInput}
-                            placeholder='Enter Phone number'
-                            value={phoneValue}
-                            onChangeText={setPhoneValue}
-                            keyboardType='number-pad' />
-
-                        <Button title='confirm' onPress={() => {
-                            input.current.blur();
-                            onNewInfo(phoneValue);
-                            setShow(show + 1);
-                        }}
-                        />
-                    </View>
-
-                );
-
-            case 3:
-                return (
-                    <View style={styles.container}>
-                        <TextInput
-                            ref={input}
-                            autoCapitalize={false}
-                            style={styles.txtInput}
-                            placeholder='Email'
-                            value={emailValue}
-                            onChangeText={setEmailValue}
-                        />
-                        <Button title='confirm' onPress={() => {
-                            input.current.blur();
-                            onNewInfo(emailValue);
-                            setShow(show + 1);
-                        }}
-                        />
-                    </View>
-
-                );
-            case 4:
-                return (
-                    <View style={styles.container}>
-                        <Text style={styles.txt2}>Select a Country:</Text>
-                        <SafeAreaView style={styles.flatView}>
-                            <FlatList
-                                data={countryValue}
-                                contentContainerStyle={styles.container}
-                                keyExtractor={({ id }, index) => id}
-                                renderItem={({ item }) => (
-                                    <Button title={item.name} onPress={() =>
-                                        setSelectedCountryValue(item.name)} />
-                                )}
-                            />
-                        </SafeAreaView>
-                        <Text style={styles.selectTxt}>
-                            Selected Country:
-                           {'\n'}
-                            {selectedCountryValue}
-                        </Text>
-                        <Button title='confirm' onPress={() => {
-                            onNewInfo(selectedCountryValue);
-                            setShow(show + 1);
-                        }}
-                        />
-                    </View>
-                );
-            case 5:
-                return (
-                    <View style={styles.container}>
-                        <Button title='Submit' onPress={() => {
-                            console.log(securityValue, phoneValue, emailValue, selectedCountryValue);
-                            isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
-                            
-                            //if any value returns false, then the an alert says what is wrong
-                            //and sets the show value to 1
-                            //if the statement is true, then the local storage and/or array of infos
-                            //are emptied
-                            //if it returns false then the array is emptied
-                        }}
-                        />
-                    </View>
-                );
-            default:
-                break;
-        }
-    }
     return (
-        <Entry />
+        <View style={styles.container}>
+            <Text>Social Security Number</Text>
+            <TextInput
+                ref={input}
+                style={styles.txtInput}
+                placeholder='YYMMDDXXXX'
+                value={securityValue}
+                onChangeText={setSecurityValue}
+                keyboardType='number-pad' />
+            <Text>Phone Number</Text>
+            <TextInput
+                ref={input}
+                style={styles.txtInput}
+                placeholder='example 0756667775'
+                value={phoneValue}
+                onChangeText={setPhoneValue}
+                keyboardType='number-pad' />
+            <Text>Email</Text>
+            <TextInput
+                ref={input}
+                autoCapitalize='none'
+                style={styles.txtInput}
+                placeholder='example johnDoe@gmail.com'
+                value={emailValue}
+                onChangeText={setEmailValue}
+            />
+            <Text style={styles.txt2}>Select a Country:</Text>
+            <SafeAreaView style={styles.flatView}>
+                <FlatList
+                    data={countryValue}
+                    contentContainerStyle={styles.container}
+                    keyExtractor={({ id }, index) => id}
+                    renderItem={({ item }) => (
+                        <Button title={item.name} onPress={() =>
+                            setSelectedCountryValue(item.name)} />
+                    )}
+                />
+            </SafeAreaView>
+            <Text style={styles.selectTxt}>
+                Selected Country:
+                </Text>
+            <Text style={styles.selectTxt2}>{selectedCountryValue}</Text>
+
+            <Button title='submit' onPress={() => {
+                input.current.blur();
+                onNewInfo(phoneValue);
+                console.log(securityValue, phoneValue, emailValue, selectedCountryValue);
+                isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
+            }}
+            />
+
+        </View>
     );
 }
 
@@ -189,6 +137,10 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         fontSize: 30,
         marginTop: 20
+    },
+    selectTxt2: {
+        alignSelf: "center",
+        fontSize: 30,
     },
     txt: {
         fontSize: 25,
