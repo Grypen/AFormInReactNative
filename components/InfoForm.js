@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert, ScrollView } from 'react-native';
+import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert, ScrollView} from 'react-native';
 import { useInfos } from '../hooks';
 
 export default function InfoForm({ onNewInfo = f => f }) {
@@ -25,15 +25,15 @@ export default function InfoForm({ onNewInfo = f => f }) {
     //checks if the inputs are empty/filled
     function isRequired(security, phone, email, country) {
         return security.length > 0 && phone.length > 0 && email.length > 0 && country.length > 0
-            ? isEmail(emailValue) : Alert.alert('All fields have to be filled');
+            ? isSecurity(securityValue) : Alert.alert('All fields have to be filled');
     }
 
     //checks if the social security number is valid using regular expressions
     function isSecurity(security) {
         const validPatterns = [
-            /^\d{10}$/,
+            /^([12]\d{3}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01]))\d{4}$/,
         ]
-        return validPatterns.some((pattern) => pattern.test(security)) ? console.log('true sec') : console.log('false sec')
+        return validPatterns.some((pattern) => pattern.test(security)) ? isPhone(phoneValue) : Alert.alert('Social Security Number is not valid')
     }
 
     //checks if the phone number is valid using regular expressions
@@ -43,14 +43,16 @@ export default function InfoForm({ onNewInfo = f => f }) {
             /^0\d{8}$/,
             /^0\d{7}$/,
         ]
-        return validPatterns.some((pattern) => pattern.test(phone)) ? console.log('true phone') : console.log('false phone')
+        return validPatterns.some((pattern) => pattern.test(phone)) ? isEmail(emailValue) : Alert.alert('Phonenumber is not valid')
     }
 
-    //checks if the email is valid
+    //checks if the email is valid, on a basic level.
+    //If we needed to actually check if a email adress was valid
+    //you would have to send a confirmation email
     function isEmail(val) {
         const ai = val.indexOf("@");
         const gdi = val.split("").reduce((acc, char, i) => char === "." ? i : acc, 0);
-        return ai > -1 && gdi > ai ? Alert.alert('this is right') : Alert.alert('Email is not valid');
+        return ai > -1 && gdi > ai ? console.log('Success') : Alert.alert('Email is not valid');
     }
 
     return (
@@ -59,8 +61,9 @@ export default function InfoForm({ onNewInfo = f => f }) {
             <TextInput
                 ref={input}
                 style={styles.txtInput}
-                placeholder='YYMMDDXXXX'
+                placeholder='YYYYMMDDXXXX'
                 value={securityValue}
+                maxLength={12}
                 onChangeText={setSecurityValue}
                 keyboardType='number-pad' />
             <Text>Phone Number</Text>
