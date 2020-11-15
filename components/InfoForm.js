@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert, ScrollView} from 'react-native';
+import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert, AsyncStorage} from 'react-native';
 import { useInfos } from '../hooks';
 
 export default function InfoForm({ onNewInfo = f => f }) {
@@ -9,6 +9,35 @@ export default function InfoForm({ onNewInfo = f => f }) {
     const [emailValue, setEmailValue] = useState("");
     const [countryValue, setCountryValue] = useState("");
     const [selectedCountryValue, setSelectedCountryValue] = useState("");
+
+    function saveData() {
+        /*let user = "Michal";*/  
+        let obj = {  
+          security: securityValue,
+          phone: phoneValue,
+          email: emailValue,
+          country: countryValue,  
+        }  
+        /*AsyncStorage.setItem('user',user);*/  
+        AsyncStorage.setItem('user',JSON.stringify(obj));  
+      }
+
+      const loadData = async () => {
+        try{  
+          let user = await AsyncStorage.getItem('user');  
+          let parsed = JSON.parse(user);  
+          //alert(parsed.security);
+          setSecurityValue(parsed.security);
+          setPhoneValue(parsed.phone);
+        }  
+        catch(error){  
+          alert(error)  
+        }  
+      }
+
+      useEffect(() => {
+        loadData();
+    }, []);
 
     const input = useRef();
 
@@ -22,10 +51,10 @@ export default function InfoForm({ onNewInfo = f => f }) {
         loadCountry();
     }, []);
 
-    //checks if the inputs are empty/filled
+    //checks if the inputs are empty or filled
     function isRequired(security, phone, email, country) {
         return security.length > 0 && phone.length > 0 && email.length > 0 && country.length > 0
-            ? isSecurity(securityValue) : Alert.alert('All fields have to be filled');
+            ? isSecurity(securityValue) : Alert.alert('All fields have to be filled out');
     }
 
     //checks if the social security number is valid using regular expressions
@@ -102,9 +131,9 @@ export default function InfoForm({ onNewInfo = f => f }) {
 
             <Button title='submit' onPress={() => {
                 input.current.blur();
-                onNewInfo(phoneValue);
-                console.log(securityValue, phoneValue, emailValue, selectedCountryValue);
-                isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
+                //onNewInfo(phoneValue);
+                saveData();
+                //isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
             }}
             />
 

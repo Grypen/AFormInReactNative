@@ -13,7 +13,6 @@ export const useInfos = () => {
         }
     }
     //Load Info
-
     useEffect(() => {
         if (infos.length) return;
         loadInfos();
@@ -25,7 +24,7 @@ export const useInfos = () => {
         AsyncStorage.setItem("@InfoListStore:Infos", JSON.stringify(infos))
     }, [infos]);
 
-    //add a hook that resets the infos value to []
+    //add a hook that resets the info values to ""
 
 
     const addInfo = info => {
