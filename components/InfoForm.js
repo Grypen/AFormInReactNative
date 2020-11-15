@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, StyleSheet, TextInput, View, Text, SafeAreaView, FlatList, Alert, AsyncStorage} from 'react-native';
-import { useInfos } from '../hooks';
+import {
+    Button, StyleSheet, TextInput,
+    View, Text, SafeAreaView,
+    FlatList, Alert, AsyncStorage
+} from 'react-native';
 
-export default function InfoForm({ onNewInfo = f => f }) {
+export default function InfoForm() {
 
     const [securityValue, setSecurityValue] = useState("");
     const [phoneValue, setPhoneValue] = useState("");
@@ -11,38 +14,36 @@ export default function InfoForm({ onNewInfo = f => f }) {
     const [selectedCountryValue, setSelectedCountryValue] = useState("");
 
     function saveData() {
-        /*let user = "Michal";*/  
-        let obj = {  
-          security: securityValue,
-          phone: phoneValue,
-          email: emailValue,
-          country: selectedCountryValue,
+        let obj = {
+            security: securityValue,
+            phone: phoneValue,
+            email: emailValue,
+            country: selectedCountryValue,
         }
-        /*AsyncStorage.setItem('user',user);*/  
-        AsyncStorage.setItem('user',JSON.stringify(obj));  
-      }
+        AsyncStorage.setItem('user', JSON.stringify(obj));
+    }
 
-      function clearData() {
-          AsyncStorage.clear();
-      }
+    function clearData() {
+        AsyncStorage.clear();
+    }
 
-      const loadData = async () => {
-        try{  
-          let user = await AsyncStorage.getItem('user');  
-          let parsed = JSON.parse(user); 
-          //alert(parsed.security);
-          setSecurityValue(parsed.security);
-          setPhoneValue(parsed.phone);
-          setEmailValue(parsed.email);
-          setSelectedCountryValue(parsed.country);
-        }  
-        catch(error){
-          console.log(error)  
-        }  
-      }
+    const loadData = async () => {
+        try {
+            let user = await AsyncStorage.getItem('user');
+            let parsed = JSON.parse(user);
+            //alert(parsed.security);
+            setSecurityValue(parsed.security);
+            setPhoneValue(parsed.phone);
+            setEmailValue(parsed.email);
+            setSelectedCountryValue(parsed.country);
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
 
-      useEffect(() => {
-          if(securityValue.length ||phoneValue.length||emailValue.length||selectedCountryValue.length) return;
+    useEffect(() => {
+        if (securityValue.length || phoneValue.length || emailValue.length || selectedCountryValue.length) return;
         loadData();
     }, []);
 
@@ -57,11 +58,11 @@ export default function InfoForm({ onNewInfo = f => f }) {
     useEffect(() => {
         loadCountry();
     }, []);
-    
+
     useEffect(() => {
         saveData();
     }, [selectedCountryValue]);
-    
+
 
     //checks if the inputs are empty or filled
     function isRequired(security, phone, email, country) {
@@ -111,7 +112,7 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 value={securityValue}
                 maxLength={12}
                 onChangeText={setSecurityValue}
-                onBlur={()=> saveData()}
+                onBlur={() => saveData()}
                 keyboardType='number-pad' />
             <Text>Phone Number</Text>
             <TextInput
@@ -120,7 +121,7 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 placeholder='example 0756667775'
                 value={phoneValue}
                 onChangeText={setPhoneValue}
-                onBlur={()=> saveData()}
+                onBlur={() => saveData()}
                 keyboardType='number-pad' />
             <Text>Email</Text>
             <TextInput
@@ -130,7 +131,7 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 placeholder='example johnDoe@gmail.com'
                 value={emailValue}
                 onChangeText={setEmailValue}
-                onBlur={()=> saveData()}
+                onBlur={() => saveData()}
             />
             {/*The countries are in a flatlist, not a dropdown, because I could not get the dropdown 
             from react-native-community to work with the fetched info*/}
@@ -138,6 +139,7 @@ export default function InfoForm({ onNewInfo = f => f }) {
             <SafeAreaView style={styles.flatView}>
                 <FlatList
                     data={countryValue}
+                    windowSize={50}
                     keyExtractor={({ id }, index) => id}
                     renderItem={({ item }) => (
                         <Button title={`${item.name}`} onPress={() => {
@@ -153,7 +155,6 @@ export default function InfoForm({ onNewInfo = f => f }) {
 
             <Button title='submit' onPress={() => {
                 input.current.blur();
-                //onNewInfo(phoneValue);
                 isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
             }}
             />
