@@ -16,26 +16,33 @@ export default function InfoForm({ onNewInfo = f => f }) {
           security: securityValue,
           phone: phoneValue,
           email: emailValue,
-          country: countryValue,  
-        }  
+          country: selectedCountryValue,
+        }
         /*AsyncStorage.setItem('user',user);*/  
         AsyncStorage.setItem('user',JSON.stringify(obj));  
+      }
+
+      function clearData() {
+          AsyncStorage.clear();
       }
 
       const loadData = async () => {
         try{  
           let user = await AsyncStorage.getItem('user');  
-          let parsed = JSON.parse(user);  
+          let parsed = JSON.parse(user); 
           //alert(parsed.security);
           setSecurityValue(parsed.security);
           setPhoneValue(parsed.phone);
+          setEmailValue(parsed.email);
+          setSelectedCountryValue(parsed.country);
         }  
-        catch(error){  
-          alert(error)  
+        catch(error){
+          console.log(error)  
         }  
       }
 
       useEffect(() => {
+          if(securityValue.length ||phoneValue.length||emailValue.length||selectedCountryValue.length) return;
         loadData();
     }, []);
 
@@ -50,6 +57,11 @@ export default function InfoForm({ onNewInfo = f => f }) {
     useEffect(() => {
         loadCountry();
     }, []);
+    
+    useEffect(() => {
+        saveData();
+    }, [selectedCountryValue]);
+    
 
     //checks if the inputs are empty or filled
     function isRequired(security, phone, email, country) {
@@ -94,6 +106,7 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 value={securityValue}
                 maxLength={12}
                 onChangeText={setSecurityValue}
+                onBlur={()=> saveData()}
                 keyboardType='number-pad' />
             <Text>Phone Number</Text>
             <TextInput
@@ -102,6 +115,7 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 placeholder='example 0756667775'
                 value={phoneValue}
                 onChangeText={setPhoneValue}
+                onBlur={()=> saveData()}
                 keyboardType='number-pad' />
             <Text>Email</Text>
             <TextInput
@@ -111,16 +125,19 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 placeholder='example johnDoe@gmail.com'
                 value={emailValue}
                 onChangeText={setEmailValue}
+                onBlur={()=> saveData()}
             />
+            {/*The countries are in a flatlist, not a dropdown, because I could not get the dropdown 
+            from react-native-community to work with the fetched info*/}
             <Text style={styles.txt2}>Select a Country:</Text>
             <SafeAreaView style={styles.flatView}>
                 <FlatList
                     data={countryValue}
-                    contentContainerStyle={styles.container}
                     keyExtractor={({ id }, index) => id}
                     renderItem={({ item }) => (
-                        <Button title={item.name} onPress={() =>
-                            setSelectedCountryValue(item.name)} />
+                        <Button title={`${item.name}`} onPress={() => {
+                            setSelectedCountryValue(item.name);
+                        }} />
                     )}
                 />
             </SafeAreaView>
@@ -132,8 +149,8 @@ export default function InfoForm({ onNewInfo = f => f }) {
             <Button title='submit' onPress={() => {
                 input.current.blur();
                 //onNewInfo(phoneValue);
-                saveData();
-                //isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
+                isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
+                //clearData();
             }}
             />
 
