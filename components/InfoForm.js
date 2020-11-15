@@ -93,7 +93,12 @@ export default function InfoForm({ onNewInfo = f => f }) {
     function isEmail(val) {
         const ai = val.indexOf("@");
         const gdi = val.split("").reduce((acc, char, i) => char === "." ? i : acc, 0);
-        return ai > -1 && gdi > ai ? console.log('Success') : Alert.alert('Email is not valid');
+        return ai > -1 && gdi > ai ? isSuccess() : Alert.alert('Email is not valid');
+    }
+
+    function isSuccess() {
+        console.log('Success')
+        clearData();
     }
 
     return (
@@ -150,7 +155,6 @@ export default function InfoForm({ onNewInfo = f => f }) {
                 input.current.blur();
                 //onNewInfo(phoneValue);
                 isRequired(securityValue, phoneValue, emailValue, selectedCountryValue);
-                //clearData();
             }}
             />
 
