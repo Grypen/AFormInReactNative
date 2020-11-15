@@ -31,7 +31,6 @@ export default function InfoForm() {
         try {
             let user = await AsyncStorage.getItem('user');
             let parsed = JSON.parse(user);
-            //alert(parsed.security);
             setSecurityValue(parsed.security);
             setPhoneValue(parsed.phone);
             setEmailValue(parsed.email);
