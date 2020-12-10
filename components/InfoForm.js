@@ -88,8 +88,6 @@ export default function InfoForm() {
     }
 
     //checks if the email is valid, on a basic level.
-    //If we needed to actually check if a email adress was valid
-    //you would have to send a confirmation email
     function isEmail(val) {
         const ai = val.indexOf("@");
         const gdi = val.split("").reduce((acc, char, i) => char === "." ? i : acc, 0);
@@ -132,8 +130,7 @@ export default function InfoForm() {
                 onChangeText={setEmailValue}
                 onBlur={() => saveData()}
             />
-            {/*The countries are in a flatlist, not a dropdown, because I could not get the dropdown 
-            from react-native-community to work with the fetched info*/}
+            
             <Text style={styles.txt2}>Select a Country:</Text>
             <SafeAreaView style={styles.flatView}>
                 <FlatList
